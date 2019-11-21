@@ -27,13 +27,6 @@ a.rs-nav-item-content:hover,
 a.rs-nav-item-content:visited,
 a.rs-nav-item-content:focus {
 	background: #607d8b !important;
-	/* color: #757575 !important;
-	font-weight: bold; */
-	/* border-radius: 100% !important;
-	border: none;
-	width: 80% !important;
-	height: 5vh !important;
-	margin: 0 auto !important; */
 }
 
 a.rs-nav-item-content {

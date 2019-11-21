@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
+import { Link, withRouter } from 'react-router-dom';
 import { Toggle, Sidenav, Nav, Icon } from 'rsuite';
 
-import { NAV_ITEMS } from './Constants';
+import { ADMINISTRATOR_NAV_ITEMS } from './Constants';
 
 import '../../styles/navigation/SideNavigation.css';
 import 'rsuite/dist/styles/rsuite-default.css';
@@ -25,9 +26,13 @@ class SideNavigation extends Component {
 	}
 
 	handleSelect(eventKey) {
+		const selectedNavItem = ADMINISTRATOR_NAV_ITEMS[eventKey];
+
 		this.setState({
 			activeKey: eventKey
 		});
+
+		this.props.history.push(selectedNavItem.to);
 	}
 
 	renderToggle = () => {
@@ -41,12 +46,14 @@ class SideNavigation extends Component {
 		);
 	};
 
-	renderNavItems = () => {
-		return NAV_ITEMS.map((item, index) => {
+	renderAdministratorNavItems = () => {
+		return ADMINISTRATOR_NAV_ITEMS.map((item, index) => {
 			return (
-				<Nav.Item key={index} eventKey={index} icon={<Icon icon={item.iconName} />}>
+				// <Link  to={item.to}>
+				<Nav.Item key={index} eventKey={index} icon={<Icon icon={item.iconName} componentClass="span" />}>
 					{item.navItem}
 				</Nav.Item>
+				// </Link>
 			);
 		});
 	};
@@ -65,7 +72,7 @@ class SideNavigation extends Component {
 				>
 					{this.renderToggle()}
 					<Sidenav.Body>
-						<Nav>{this.renderNavItems()}</Nav>
+						<Nav>{this.renderAdministratorNavItems()}</Nav>
 					</Sidenav.Body>
 				</Sidenav>
 			</div>
@@ -73,4 +80,4 @@ class SideNavigation extends Component {
 	}
 }
 
-export default SideNavigation;
+export default withRouter(SideNavigation);

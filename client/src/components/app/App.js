@@ -1,11 +1,11 @@
 import React from 'react';
 
-import SideNavigation from '../navigation/SideNavigation';
+import Router from '../navigation/Router';
 
 const App = () => {
 	return (
 		<div className="App">
-			<SideNavigation />
+			<Router />
 		</div>
 	);
 };
