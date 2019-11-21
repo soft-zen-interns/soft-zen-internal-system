@@ -1,6 +1,5 @@
 import React from 'react';
 
-import Table from '../common/Table';
 import SideNavigation from '../navigation/SideNavigation';
 
 const App = () => {

@@ -1,0 +1,47 @@
+.rs-sidenav.rs-sidenav-default {
+	background: #404453;
+}
+
+.rs-btn-toggle {
+	background: #aaa !important;
+	margin: 5% 0 20px 10% !important;
+}
+
+.rs-sidenav.rs-sidenav-default.rs-sidenav-collapse-out .rs-btn-toggle {
+	width: 80%;
+}
+
+.rs-btn-toggle-checked {
+	background: #757575 !important;
+}
+
+li.rs-nav-item:hover,
+li.rs-nav-item:visited,
+li.rs-nav-item:focus,
+a.rs-nav-item-content:hover,
+a.rs-nav-item-content:visited,
+a.rs-nav-item-content:focus {
+	background: #aaa !important;
+	/* border-radius: 100% !important;
+	border: none;
+	width: 80% !important;
+	height: 5vh !important;
+	margin: 0 auto !important; */
+}
+
+.rs-ripple-pond:hover {
+	background: pink !important;
+}
+
+a.rs-nav-item-content {
+	color: #fff !important;
+}
+
+.rs-sidenav.rs-sidenav-default .rs-nav-item {
+	margin-bottom: 20px !important;
+}
+
+.rs-nav-item,
+.rs-icon {
+	font-size: 20px !important;
+}
