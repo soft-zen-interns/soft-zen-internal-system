@@ -3,7 +3,7 @@
 }
 
 .rs-btn-toggle {
-	background: #aaa !important;
+	background: #607d8b !important;
 	margin: 5% 0 20px 10% !important;
 }
 
@@ -12,7 +12,12 @@
 }
 
 .rs-btn-toggle-checked {
-	background: #757575 !important;
+	background: #607d8b !important;
+}
+
+.rs-btn-toggle-inner,
+.rs-btn-toggle-inner:after {
+	color: #e0f7fa !important;
 }
 
 li.rs-nav-item:hover,
@@ -21,7 +26,9 @@ li.rs-nav-item:focus,
 a.rs-nav-item-content:hover,
 a.rs-nav-item-content:visited,
 a.rs-nav-item-content:focus {
-	background: #aaa !important;
+	background: #607d8b !important;
+	/* color: #757575 !important;
+	font-weight: bold; */
 	/* border-radius: 100% !important;
 	border: none;
 	width: 80% !important;
@@ -29,12 +36,8 @@ a.rs-nav-item-content:focus {
 	margin: 0 auto !important; */
 }
 
-.rs-ripple-pond:hover {
-	background: pink !important;
-}
-
 a.rs-nav-item-content {
-	color: #fff !important;
+	color: #e0f7fa !important;
 }
 
 .rs-sidenav.rs-sidenav-default .rs-nav-item {
