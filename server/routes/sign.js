@@ -52,7 +52,7 @@ router.post('/up', (req,res) => {
                 console.log("Database error");
             } else if (result.toString() !== "") {
                 console.log("-> " + username + " already exists.");
-                res.send("-> " + username + " already exists.");
+                res.status(400).send("-> " + username + " already exists.");
             } else {
                 if (password != null) {
                     let token = jwt.sign(payload, "secret_key", {algorithm: 'HS256'});
@@ -77,7 +77,45 @@ router.post('/up', (req,res) => {
             }
         })
     })
-
 });
+
+
+router.get('/in', (req,res) => {
+    var username = req.body.username;
+    var password = req.body.password;
+
+    connection.getConnection(function (err, connection) {
+        connection.query("Select (token) from users where username = '" + username + "'", function (err, result) {
+            if (err) {
+                console.log("Database error");
+            } else if (result.toString() === "") {
+                console.log("-> " + username + " does not exists.");
+                res.status(400).send("-> " + username + " does not exists.");
+            } else {
+                if (password != null) {
+                    let token = result[0].token.toString();
+
+                    jwt.verify(token,"secret_key",function(err,verifiedJwt){
+                        if(err){
+                            res.status(400).send("Token has expired, or something else went wrong");
+                        }else{
+                            if (verifiedJwt.password.toString() === password)
+                            {
+                                res.send(token);
+                            }else{
+                                res.status(400).send("Wrong password");
+                            }
+                        }
+                    });
+                } else {
+                    res.status(400).send('No password!');
+                    console.log('No password!');
+                }
+            }
+
+        })
+    })
+});
+
 
 module.exports = router;
