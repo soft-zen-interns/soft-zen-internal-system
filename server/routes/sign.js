@@ -27,16 +27,6 @@ const users = sequelize.define('users', {
     token: Sequelize.STRING
 });
 
-
-router.get('/', (req,res) => {
-    let a = sequelize.query("select * from users");
-
-    res.send(a);
-    console.log(a);
-    res.send("draste");
-    console.log("draste");
-});
-
 router.post('/up', (req,res) => {
     console.log(req.body);
     var username = req.body.username;
