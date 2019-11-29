@@ -83,9 +83,9 @@ router.post('/create', (req,res) => {
     let email = req.body.email;
     let type = req.body.type;
     let country = req.body.country;
-    let totalRevenues = req.body.totalRevenues;
-    let totalCosts = req.body.totalCosts;
-    let totalProfit = req.body.totalProfit;
+    // let totalRevenues = req.body.totalRevenues;
+    // let totalCosts = req.body.totalCosts;
+    // let totalProfit = req.body.totalProfit;
     let startDate = req.body.startDate;
     let endDate = req.body.endDate;
 
@@ -100,12 +100,32 @@ router.post('/create', (req,res) => {
     }).then(function (clients) {
         if (clients) {
             res.send("Client  " + name + " was added successfully -> JSON: " + JSON.stringify(clients));
-            console.log("Client " + username + " was added successfully -> JSON: " + JSON.stringify(clients));
+            console.log("Client " + name + " was added successfully -> JSON: " + JSON.stringify(clients));
         } else {
             res.status(400).send('Error in insert new record');
             console.log('Error in insert new record');
         }
     })
+});
+
+router.put('/edit/:clientId', function (req, res, next) {
+    clients.update(
+        {
+            name: req.body.name,
+            contactName: req.body.contactName,
+            email: req.body.email,
+            type: req.body.type,
+            country: req.body.country,
+            startDate: req.body.startDate,
+            endDate: req.body.endDate
+        },
+        {where: {id: req.params.clientId}}
+    )
+        .then(function(rowsUpdated) {
+             res.send(rowsUpdated + " row updated");
+             console.log(rowsUpdated + " row updated");
+        })
+        .catch(next)
 });
 
 
