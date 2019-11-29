@@ -128,6 +128,16 @@ router.put('/edit/:clientId', function (req, res, next) {
         .catch(next)
 });
 
+router.delete('/delete/:clientId', function (req, res, next) {
+    clients.destroy({
+        where: {
+            id: req.params.clientId
+        }
+    });
+    res.send("Successfully deleted client with id " + req.params.clientId);
+    console.log("Successfully deleted client with id " + req.params.clientId);
+});
+
 
 
 module.exports = router;
