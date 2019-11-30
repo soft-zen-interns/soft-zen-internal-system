@@ -92,6 +92,21 @@ router.get('/', (req,res) => {
     });
 });
 
+router.get('/names', (req,res) => {
+    connection.getConnection(function (err, connection) {
+        connection.query("SELECT (name) FROM clients ORDER BY id ASC", function (err, result) {
+            if (err) {
+                res.status(400).send(err.message);
+                console.log("Database error!");
+            }
+            else {
+                console.log(result);
+                res.send(result);
+            }
+        });
+    });
+});
+
 router.post('/create', (req,res) => {
     let name = req.body.name;
     let contactName = req.body.contactName;
