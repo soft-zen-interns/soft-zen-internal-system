@@ -117,34 +117,43 @@ router.post('/create', (req,res) => {
 });
 
 router.put('/edit/:clientId', function (req, res, next) {
-    clients.update(
-        {
-            name: req.body.name,
-            contactName: req.body.contactName,
-            email: req.body.email,
-            type: req.body.type,
-            country: req.body.country,
-            startDate: req.body.startDate,
-            endDate: req.body.endDate
-        },
-        {where: {id: req.params.clientId}}
-    )
-        .then(function(rowsUpdated) {
-            if (rowsUpdated.toString() === "0")
-            {
-                console.log("-> Client with id " + req.params.clientId + " does not exist.");
-                res.status(400).send("-> Client with id " + req.params.clientId + " does not exist.");
-            }else {
-                connection.getConnection(function (err, connection) {
-                    connection.query("Select * from clients where id = '" + req.params.clientId + "'", function (err, result) {
-                        res.send("-> " + rowsUpdated + " row updated. Updated client: " + JSON.stringify(result));
-                        console.log("-> " + rowsUpdated + " row updated. Updated client: " + JSON.stringify(result));
-                    })
-                })
+    let name = req.body.name;
 
+    connection.getConnection(function (err, connection) {
+        connection.query("Select * from clients where name = '" + name + "'", function (err, result) {
+            if (err) {
+                console.log("Database error");
+            } else if (result.toString() !== "" && result[0]['id'].toString() !== req.params.clientId.toString()) {
+                console.log("-> Client with name \"" + name + "\" already exists.");
+                res.status(400).send("-> Client with name \"" + name + "\" already exists.");
+            } else {
+                clients.update(
+                    {
+                        name: req.body.name,
+                        contactName: req.body.contactName,
+                        email: req.body.email,
+                        type: req.body.type,
+                        country: req.body.country,
+                        startDate: req.body.startDate,
+                        endDate: req.body.endDate
+                    },
+                    {where: {id: req.params.clientId}}
+                )
+                    .then(function (rowsUpdated) {
+                        if (rowsUpdated.toString() === "0") {
+                            console.log("-> Client with id " + req.params.clientId + " does not exist.");
+                            res.status(400).send("-> Client with id " + req.params.clientId + " does not exist.");
+                        } else {
+                            connection.query("Select * from clients where id = '" + req.params.clientId + "'", function (err, result) {
+                                res.send("-> " + rowsUpdated + " row updated. Updated client: " + JSON.stringify(result));
+                                console.log("-> " + rowsUpdated + " row updated. Updated client: " + JSON.stringify(result));
+                            })
+                        }
+                    })
+                    .catch(next)
             }
         })
-        .catch(next)
+    })
 });
 
 router.delete('/delete/:clientId', function (req, res, next) {
