@@ -83,28 +83,36 @@ router.post('/create', (req,res) => {
     let email = req.body.email;
     let type = req.body.type;
     let country = req.body.country;
-    // let totalRevenues = req.body.totalRevenues;
-    // let totalCosts = req.body.totalCosts;
-    // let totalProfit = req.body.totalProfit;
     let startDate = req.body.startDate;
     let endDate = req.body.endDate;
 
-    return clients.create({
-        name:name,
-        contactName: contactName,
-        email: email,
-        type: type,
-        country: country,
-        startDate: startDate,
-        endDate: endDate,
-    }).then(function (clients) {
-        if (clients) {
-            res.send("-> Client with name \"" + name + "\" was added successfully -> JSON: " + JSON.stringify(clients));
-            console.log("-> Client with name \"" + name + "\" was added successfully -> JSON: " + JSON.stringify(clients));
-        } else {
-            res.status(400).send('Error in insert new record');
-            console.log('Error in insert new record');
-        }
+    connection.getConnection(function (err, connection) {
+        connection.query("Select (name) from clients where name = '" + name + "'", function (err, result) {
+            if (err) {
+                console.log("Database error");
+            } else if (result.toString() !== "") {
+                console.log("-> Client with name \"" + name + "\" already exists.");
+                res.status(400).send("-> Client with name \"" + name + "\" already exists.");
+            } else {
+                return clients.create({
+                    name: name,
+                    contactName: contactName,
+                    email: email,
+                    type: type,
+                    country: country,
+                    startDate: startDate,
+                    endDate: endDate,
+                }).then(function (clients) {
+                    if (clients) {
+                        res.send("-> Client with name \"" + name + "\" was added successfully -> JSON: " + JSON.stringify(clients));
+                        console.log("-> Client with name \"" + name + "\" was added successfully -> JSON: " + JSON.stringify(clients));
+                    } else {
+                        res.status(400).send('Error in insert new record');
+                        console.log('Error in insert new record');
+                    }
+                })
+            }
+        })
     })
 });
 
@@ -125,7 +133,7 @@ router.put('/edit/:clientId', function (req, res, next) {
             if (rowsUpdated.toString() === "0")
             {
                 console.log("-> Client with id " + req.params.clientId + " does not exist.");
-                res.send("-> Client with id " + req.params.clientId + " does not exist.");
+                res.status(400).send("-> Client with id " + req.params.clientId + " does not exist.");
             }else {
                 connection.getConnection(function (err, connection) {
                     connection.query("Select * from clients where id = '" + req.params.clientId + "'", function (err, result) {
@@ -147,7 +155,7 @@ router.delete('/delete/:clientId', function (req, res, next) {
                 console.log("Database error");
             } else if (result.toString() === "") {
                 console.log("-> Client with id " + req.params.clientId + " does not exist.");
-                res.send("-> Client with id " + req.params.clientId + " does not exist.");
+                res.status(400).send("-> Client with id " + req.params.clientId + " does not exist.");
             } else {
                 clients.destroy({
                     where: {
