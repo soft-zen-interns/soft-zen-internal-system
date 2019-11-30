@@ -99,8 +99,8 @@ router.post('/create', (req,res) => {
         endDate: endDate,
     }).then(function (clients) {
         if (clients) {
-            res.send("Client  " + name + " was added successfully -> JSON: " + JSON.stringify(clients));
-            console.log("Client " + name + " was added successfully -> JSON: " + JSON.stringify(clients));
+            res.send("-> Client with name \"" + name + "\" was added successfully -> JSON: " + JSON.stringify(clients));
+            console.log("-> Client with name \"" + name + "\" was added successfully -> JSON: " + JSON.stringify(clients));
         } else {
             res.status(400).send('Error in insert new record');
             console.log('Error in insert new record');
@@ -122,28 +122,42 @@ router.put('/edit/:clientId', function (req, res, next) {
         {where: {id: req.params.clientId}}
     )
         .then(function(rowsUpdated) {
-             res.send(rowsUpdated + " row updated");
-             console.log(rowsUpdated + " row updated");
+            if (rowsUpdated.toString() === "0")
+            {
+                console.log("-> Client with id " + req.params.clientId + " does not exist.");
+                res.send("-> Client with id " + req.params.clientId + " does not exist.");
+            }else {
+                connection.getConnection(function (err, connection) {
+                    connection.query("Select * from clients where id = '" + req.params.clientId + "'", function (err, result) {
+                        res.send("-> " + rowsUpdated + " row updated. Updated client: " + JSON.stringify(result));
+                        console.log("-> " + rowsUpdated + " row updated. Updated client: " + JSON.stringify(result));
+                    })
+                })
+
+            }
         })
         .catch(next)
 });
 
 router.delete('/delete/:clientId', function (req, res, next) {
-    connection.query("Select * from clients where id = '" + req.params.clientId + "'", function (err, result) {
-        if (err) {
-            console.log("Database error");
-        } else if (result.toString() === "") {
-            console.log("-> Client with id " + req.params.clientId + " does not exist.");
-            res.send("-> Client with id " + req.params.clientId + " does not exist.");
-        } else {
-            clients.destroy({
-                where: {
-                    id: req.params.clientId
-                }
-            });
-            res.send("-> Successfully deleted client with id " + req.params.clientId);
-            console.log("-> Successfully deleted client with id " + req.params.clientId);
-        }
+    connection.getConnection(function (err, connection)
+    {
+        connection.query("Select * from clients where id = '" + req.params.clientId + "'", function (err, result) {
+            if (err) {
+                console.log("Database error");
+            } else if (result.toString() === "") {
+                console.log("-> Client with id " + req.params.clientId + " does not exist.");
+                res.send("-> Client with id " + req.params.clientId + " does not exist.");
+            } else {
+                clients.destroy({
+                    where: {
+                        id: req.params.clientId
+                    }
+                });
+                res.send("-> Successfully deleted client with id " + req.params.clientId);
+                console.log("-> Successfully deleted client with id " + req.params.clientId);
+            }
+        })
     })
 });
 
