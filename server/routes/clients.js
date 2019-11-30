@@ -129,13 +129,22 @@ router.put('/edit/:clientId', function (req, res, next) {
 });
 
 router.delete('/delete/:clientId', function (req, res, next) {
-    clients.destroy({
-        where: {
-            id: req.params.clientId
+    connection.query("Select * from clients where id = '" + req.params.clientId + "'", function (err, result) {
+        if (err) {
+            console.log("Database error");
+        } else if (result.toString() === "") {
+            console.log("-> Client with id " + req.params.clientId + " does not exist.");
+            res.send("-> Client with id " + req.params.clientId + " does not exist.");
+        } else {
+            clients.destroy({
+                where: {
+                    id: req.params.clientId
+                }
+            });
+            res.send("-> Successfully deleted client with id " + req.params.clientId);
+            console.log("-> Successfully deleted client with id " + req.params.clientId);
         }
-    });
-    res.send("Successfully deleted client with id " + req.params.clientId);
-    console.log("Successfully deleted client with id " + req.params.clientId);
+    })
 });
 
 
