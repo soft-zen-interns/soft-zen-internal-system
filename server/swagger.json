@@ -1,0 +1,26 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "SoftZen internal system",
+    "description": "API description in Markdown.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://localhost:8000"
+    }
+  ],
+  "paths": {
+    "/users": {
+      "get": {
+        "summary": "Returns a list of users.",
+        "description": "Optional extended description in Markdown.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  }
+}
