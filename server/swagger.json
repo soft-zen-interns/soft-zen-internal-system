@@ -7,18 +7,115 @@
   },
   "servers": [
     {
-      "url": "https://localhost:8000"
+      "url": "http://localhost:8000"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Clients",
+      "description": "API endpoint for CRUD operations with clients."
     }
   ],
   "paths": {
-    "/users": {
+    "/clients": {
       "get": {
-        "summary": "Returns a list of users.",
-        "description": "Optional extended description in Markdown.",
+        "tags": [
+          "Clients"
+        ],
+        "summary": "Returns all the clients.",
+        "description": "Returns a list of all the clients from the database in json format",
         "responses": {
           "200": {
             "description": "OK"
           }
+        }
+      }
+    },
+    "/clients/names": {
+      "get": {
+        "tags": [
+          "Clients"
+        ],
+        "summary": "Returns all the client names.",
+        "description": "Returns a list of all the client names from the database in json format",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/clients/create": {
+      "post": {
+        "tags": [
+          "Clients"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Client to create",
+            "schema": {
+              "$ref": "#/definitions/Client"
+            }
+          }
+        ],
+        "summary": "Creates a new client.",
+        "description": "Inserts a new client in the database, with all the parameters.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong."
+          }
+        }
+      }
+    },
+    "/clients/edit/{clientId}": {
+      "put": {
+        "tags": [
+          "Clients"
+        ],
+        "summary": "Creates a new client.",
+        "description": "Inserts a new client in the database, with all the parameters.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Client": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "contactName": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "endDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     }
