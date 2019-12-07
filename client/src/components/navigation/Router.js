@@ -12,6 +12,7 @@ import Settings from '../settings/Settings';
 
 const Router = () => (
 	<BrowserRouter>
+	<div style={{display: "flex"}}>
 		<SideNavigation />
 
 		<Switch>
@@ -30,6 +31,7 @@ const Router = () => (
 
 			{/* <Route component={NotFound} /> */}
 		</Switch>
+	</div>
 	</BrowserRouter>
 );
 
