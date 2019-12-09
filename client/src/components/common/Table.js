@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
+import cellEditFactory from 'react-bootstrap-table2-editor';
 import axios from 'axios';
 
 
@@ -54,6 +55,7 @@ class Table extends Component {
 				keyField = "name"
 				data = {this.state.clients}
 				columns = {columns}
+				cellEdit={ cellEditFactory({ mode: 'click' }) }
 			/>
 		);
 	}

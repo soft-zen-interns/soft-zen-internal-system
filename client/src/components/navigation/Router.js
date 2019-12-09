@@ -9,6 +9,7 @@ import Employees from '../employees/Employees';
 import Financials from '../financials/Financials';
 import Documents from '../documents/Documents';
 import Settings from '../settings/Settings';
+import CreateClient from '../common/CreateClient';
 
 const Router = () => (
 	<BrowserRouter>
@@ -28,6 +29,8 @@ const Router = () => (
 			<Route path="/documents" component={Documents} />
 
 			<Route path="/settings" component={Settings} />
+
+			<Route path="/register" component={CreateClient} />
 
 			{/* <Route component={NotFound} /> */}
 		</Switch>
