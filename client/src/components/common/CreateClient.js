@@ -9,6 +9,7 @@ class CreateClient extends Component {
       contactName: '',
       email: '',
       type: '',
+      country: '',
       startDate: ''
     };
 
@@ -20,26 +21,22 @@ class CreateClient extends Component {
   };
 
   registerClient(){
-    //hardcoded client
     const params = new URLSearchParams();
-    params.append('name', 'Somebody');
-    params.append('contactName', 'Company');
-    params.append('email', 'smiley@yahoo.com');
-    params.append('type', 'startup');
-    params.append('country', 'USA');
-    params.append('startDate', '2012-12-11');
+    params.append('name', this.state.name);
+    params.append('contactName', this.state.contactName);
+    params.append('email', this.state.email);
+    params.append('type', this.state.type);
+    params.append('country', this.state.country);
+    params.append('startDate', new Date().toJSON());
 
     const url = "http://localhost:8000/clients/create"  
-    axios({
-      method: "post", 
-      url: url, 
-      data: params
-    });
-    // .then(response =>
-    //   console.log(response)
-    // ).catch(error =>
-    //   console.log(error)
-    // );
+
+    axios.post(url, params)
+    .then(response =>
+      console.log(response)
+    ).catch(error =>
+       console.log(error)
+    );
   }
 
   render() {
@@ -55,12 +52,12 @@ class CreateClient extends Component {
           <Form.Control name="name" type="text" onChange={this.handleChange}/>
         </Form.Group>
 
-        <Form.Group controlId="formBasicConstactName">
+        <Form.Group controlId="formBasicContactName">
           <Form.Label>Contact Name</Form.Label>
           <Form.Control name="contactName" type="text" onChange={this.handleChange}/>
         </Form.Group>
 
-        <Form.Group controlId="formBasicSountry">
+        <Form.Group controlId="formBasicCountry">
           <Form.Label>Country</Form.Label>
           <Form.Control name="country" type="text" onChange={this.handleChange}/>
         </Form.Group>
@@ -74,10 +71,9 @@ class CreateClient extends Component {
           Submit
         </Button>
 
-  <p>{JSON.stringify(this.state)}</p>
+        <p>{Date.now().valueOf()}</p>
       </Form>
     );
   }
 }
-
 export default CreateClient;
