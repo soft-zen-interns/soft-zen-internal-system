@@ -27,6 +27,9 @@ describe("Test client endpoints", () => {
         // Stub is a function whose behaviour you specify, eg. tell what to do and what to return
         const getClientsStub = sinon.stub(dao, 'getClients').resolves(dbClientsResponse);
 
+        // () => {
+        //     return new Promise(res => {res()})
+        // }
         // make a GET request to /clients endpoint
         chai.request(app())
             .get('/clients')
