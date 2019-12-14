@@ -118,18 +118,10 @@ router.post('/create', (req, res) => {
                 console.log("-> Client with name \"" + name + "\" already exists.");
                 res.status(400).send("-> Client with name \"" + name + "\" already exists.");
             } else {
-                return clients.create({
-                    name: name,
-                    contactName: contactName,
-                    email: email,
-                    type: type,
-                    country: country,
-                    startDate: startDate,
-                    endDate: endDate,
-                }).then(function (clients) {
+                dao.createClient(name,contactName,email,type,country,startDate,endDate).then(function (clients) {
                     if (clients) {
-                        res.send("-> Client with name \"" + name + "\" was added successfully -> JSON: " + JSON.stringify(clients));
-                        console.log("-> Client with name \"" + name + "\" was added successfully -> JSON: " + JSON.stringify(clients));
+                        res.send("-> Client with name \"" + clients.name + "\" was added successfully -> JSON: " + JSON.stringify(clients));
+                        console.log("-> Client with name \"" + clients.name + "\" was added successfully -> JSON: " + JSON.stringify(clients));
                     } else {
                         res.status(400).send('Error in insert new record');
                         console.log('Error in insert new record');
