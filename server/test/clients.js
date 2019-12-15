@@ -13,7 +13,7 @@ chai.should();
 
 describe("Test client endpoints", () => {
 
-    it('should get all', (done) => {
+    it('should get all clients', (done) => {
 
         const client1 = {
             name: 'Pesho',
@@ -58,7 +58,7 @@ describe("Test client endpoints", () => {
             })
     });
 
-    it('should create new', (done) => {
+    it('should create new client', (done) => {
         const client = {
             name: "testClient",
             contactName: "testContact",
@@ -66,7 +66,7 @@ describe("Test client endpoints", () => {
             type: "testType",
             country: "testCountry",
             startDate: "2019-12-14T13:04:40.574Z"
-        }
+        };
 
         const createClientStub = sinon.stub(dao, 'createClient').resolves(client);
 
@@ -87,6 +87,58 @@ describe("Test client endpoints", () => {
                  createClientStub.restore();
 
                 // call done() to complete async it() test
+                done();
+            });
+    });
+
+
+    it('should edit client', (done) => {
+        const client = {
+            name: "testClient",
+            contactName: "testContact",
+            email: "testEmail",
+            type: "testType",
+            country: "testCountry",
+            startDate: "2019-12-14T13:04:40.574Z"
+        };
+
+        const updateClientStub = sinon.stub(dao, 'updateClient').resolves(client);
+
+        chai.request(app())
+            .put('/clients/edit/1')
+            .end((err, res) => {
+                expect(res.status).to.equal(200);
+
+                assert(updateClientStub.calledOnce, 'Expected to call dao.getClients() once');
+
+                updateClientStub.restore();
+
+                done();
+            });
+    });
+
+
+    it('should delete client', (done) => {
+        const client = {
+            name: "testClient",
+            contactName: "testContact",
+            email: "testEmail",
+            type: "testType",
+            country: "testCountry",
+            startDate: "2019-12-14T13:04:40.574Z"
+        };
+
+        const deleteClientStub = sinon.stub(dao, 'deleteClient').resolves(client);
+
+        chai.request(app())
+            .delete('/clients/delete/1')
+            .end((err, res) => {
+                expect(res.status).to.equal(200);
+
+                assert(deleteClientStub.calledOnce, 'Expected to call dao.getClients() once');
+
+                deleteClientStub.restore();
+
                 done();
             });
     });

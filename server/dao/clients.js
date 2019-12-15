@@ -82,3 +82,28 @@ module.exports.createClient = (name,contactName,email,type,country,startDate,end
     endDate: endDate,
   })
 };
+
+module.exports.updateClient = (clientId, name,contactName,email,type,country,startDate,endDate) => {
+  return clients.update(
+      {
+        name: name,
+        contactName: contactName,
+        email: email,
+        type: type,
+        country: country,
+        startDate: startDate,
+        endDate: endDate,
+      },
+      { where: { id: clientId } }
+  )
+};
+
+module.exports.deleteClient = (clientId) => {
+  return clients.destroy({
+    where: {
+      id: clientId
+    }
+  });
+};
+
+
