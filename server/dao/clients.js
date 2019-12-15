@@ -71,6 +71,10 @@ module.exports.getClients = () => {
   return db.query('SELECT * FROM clients ORDER BY id ASC');
 };
 
+module.exports.getClientByName = (name) => {
+  return db.query("Select (name) from clients where name = '" + name + "'");
+};
+
 module.exports.createClient = (name,contactName,email,type,country,startDate,endDate) => {
   return clients.create({
     name: name,
@@ -79,7 +83,7 @@ module.exports.createClient = (name,contactName,email,type,country,startDate,end
     type: type,
     country: country,
     startDate: startDate,
-    endDate: endDate,
+    endDate: endDate
   })
 };
 
@@ -92,7 +96,7 @@ module.exports.updateClient = (clientId, name,contactName,email,type,country,sta
         type: type,
         country: country,
         startDate: startDate,
-        endDate: endDate,
+        endDate: endDate
       },
       { where: { id: clientId } }
   )

@@ -59,15 +59,25 @@ describe("Test client endpoints", () => {
     });
 
     it('should create new client', (done) => {
+        let name = "testClient";
+        let contactName = "testContact";
+        let email = "testEmail";
+        let type = "testType";
+        let country ="testCountry";
+        let startDate = "2019-12-14T13:04:40.574Z";
+        let endDate = "2019-12-14T13:04:40.574Z";
+
         const client = {
-            name: "testClient",
-            contactName: "testContact",
-            email: "testEmail",
-            type: "testType",
-            country: "testCountry",
-            startDate: "2019-12-14T13:04:40.574Z"
+            name: name,
+            contactName: contactName,
+            email: email,
+            type: type,
+            country: country,
+            startDate: startDate,
+            endDate: endDate
         };
 
+        const getClientByNameStub = sinon.stub(dao, 'getClientByName').resolves([]);
         const createClientStub = sinon.stub(dao, 'createClient').resolves(client);
 
         chai.request(app())
@@ -83,6 +93,7 @@ describe("Test client endpoints", () => {
                 // see if http response clients has the same size as the one we expect
                 //expect(res.body).to.equal("-> Client with name \"" + client.name + "\" was added successfully -> JSON: " + JSON.stringify(client));
 
+                assert(createClientStub.calledWithExactly(name, contactName, email, type, country, startDate, endDate), 'Expected to call dao.createClient() with exact args');
                 // Restore the stub
                  createClientStub.restore();
 
