@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
-
+import Table from '../common/Table';
 class Clients extends Component {
 	render() {
-		return <div>Clients</div>;
+		return (
+			<div style={{  }}>
+				<Table />
+			</div>
+		);
 	}
 }
 

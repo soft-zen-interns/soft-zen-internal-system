@@ -9,9 +9,11 @@ import Employees from '../employees/Employees';
 import Financials from '../financials/Financials';
 import Documents from '../documents/Documents';
 import Settings from '../settings/Settings';
+import CreateClient from '../common/CreateClient';
 
 const Router = () => (
 	<BrowserRouter>
+	<div style={{display: "flex"}}>
 		<SideNavigation />
 
 		<Switch>
@@ -28,8 +30,11 @@ const Router = () => (
 
 			<Route path="/settings" component={Settings} />
 
+			<Route path="/register" component={CreateClient} />
+
 			{/* <Route component={NotFound} /> */}
 		</Switch>
+	</div>
 	</BrowserRouter>
 );
 

@@ -60,7 +60,7 @@ class SideNavigation extends Component {
 		const { expanded } = this.state;
 
 		return (
-			<div style={{ width: 250 }}>
+			<div style={{ width: 250, display: "inline-block" }}>
 				<Sidenav
 					expanded={expanded}
 					defaultOpenKeys={[ '3', '4' ]}

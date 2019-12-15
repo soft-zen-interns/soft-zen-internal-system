@@ -1,13 +1,7 @@
-const express = require('express');
-const app = express();
-const sign = require('./routes/sign.js');
-const clients = require('./routes/clients.js');
+const app = (require('./getApp'))()
 
+const PORT = process.env.PORT || 5000;
 
-app.use('/sign',sign);
-app.use('/clients',clients);
-
-
-var server = app.listen(8000, '0.0.0.0', function() {
-    console.log("server started on port 8000...");
+var server = app.listen(PORT, '0.0.0.0', function () {
+    console.log("server started on port " + PORT + "...");
 });

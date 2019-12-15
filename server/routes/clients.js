@@ -2,6 +2,7 @@ const router = require('express').Router();
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const Sequelize = require('sequelize');
+const dao = require('../dao/clients')
 
 router.use(bodyParser.urlencoded({ extended: true }));
 
@@ -77,22 +78,15 @@ const clients = sequelize.define('clients', {
     }
 });
 
-router.get('/', (req,res) => {
-    connection.getConnection(function (err, connection) {
-        connection.query("SELECT * FROM clients ORDER BY id ASC", function (err, result) {
-            if (err) {
-                res.status(400).send(err.message);
-                console.log("Database error!");
-            }
-            else {
-                console.log(result);
-                res.send(result);
-            }
-        });
-    });
+router.get('/', (req, res, next) => {
+    return dao.getClients()
+        .then(clients => {
+            return res.json(clients)
+        })
+        .catch(next)
 });
 
-router.get('/names', (req,res) => {
+router.get('/names', (req, res) => {
     connection.getConnection(function (err, connection) {
         connection.query("SELECT (name) FROM clients ORDER BY id ASC", function (err, result) {
             if (err) {
@@ -107,7 +101,7 @@ router.get('/names', (req,res) => {
     });
 });
 
-router.post('/create', (req,res) => {
+router.post('/create', (req, res) => {
     let name = req.body.name;
     let contactName = req.body.contactName;
     let email = req.body.email;
@@ -124,18 +118,10 @@ router.post('/create', (req,res) => {
                 console.log("-> Client with name \"" + name + "\" already exists.");
                 res.status(400).send("-> Client with name \"" + name + "\" already exists.");
             } else {
-                return clients.create({
-                    name: name,
-                    contactName: contactName,
-                    email: email,
-                    type: type,
-                    country: country,
-                    startDate: startDate,
-                    endDate: endDate,
-                }).then(function (clients) {
+                dao.createClient(name,contactName,email,type,country,startDate,endDate).then(function (clients) {
                     if (clients) {
-                        res.send("-> Client with name \"" + name + "\" was added successfully -> JSON: " + JSON.stringify(clients));
-                        console.log("-> Client with name \"" + name + "\" was added successfully -> JSON: " + JSON.stringify(clients));
+                        res.send("-> Client with name \"" + clients.name + "\" was added successfully -> JSON: " + JSON.stringify(clients));
+                        console.log("-> Client with name \"" + clients.name + "\" was added successfully -> JSON: " + JSON.stringify(clients));
                     } else {
                         res.status(400).send('Error in insert new record');
                         console.log('Error in insert new record');
@@ -167,7 +153,7 @@ router.put('/edit/:clientId', function (req, res, next) {
                         startDate: req.body.startDate,
                         endDate: req.body.endDate
                     },
-                    {where: {id: req.params.clientId}}
+                    { where: { id: req.params.clientId } }
                 )
                     .then(function (rowsUpdated) {
                         if (rowsUpdated.toString() === "0") {
@@ -187,8 +173,7 @@ router.put('/edit/:clientId', function (req, res, next) {
 });
 
 router.delete('/delete/:clientId', function (req, res, next) {
-    connection.getConnection(function (err, connection)
-    {
+    connection.getConnection(function (err, connection) {
         connection.query("Select * from clients where id = '" + req.params.clientId + "'", function (err, result) {
             if (err) {
                 console.log("Database error");
