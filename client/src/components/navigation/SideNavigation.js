@@ -49,11 +49,9 @@ class SideNavigation extends Component {
 	renderAdministratorNavItems = () => {
 		return ADMINISTRATOR_NAV_ITEMS.map((item, index) => {
 			return (
-				// <Link  to={item.to}>
 				<Nav.Item key={index} eventKey={index} icon={<Icon icon={item.iconName} componentClass="span" />}>
 					{item.navItem}
 				</Nav.Item>
-				// </Link>
 			);
 		});
 	};
