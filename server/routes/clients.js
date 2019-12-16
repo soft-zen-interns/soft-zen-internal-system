@@ -101,7 +101,54 @@ router.get('/names', (req, res) => {
     });
 });
 
-router.post('/create', (req, res) => {
+router.post('/create', (req, res, next) => {
+    let name = req.body.name;
+    let contactName = req.body.contactName;
+    let email = req.body.email;
+    let type = req.body.type;
+    let country = req.body.country;
+    let startDate = req.body.startDate;
+    let endDate = req.body.endDate;
+
+    return dao.getClientByName(name)
+        .then(clients => {
+            if(clients.length > 0){
+                throw { status: 409, message: 'Client already exists' }
+            }
+            return dao.createClient(name,contactName,email,type,country,startDate,endDate).then(function (clients) {
+                if (clients) {
+                    res.send("-> Client with name \"" + clients.name + "\" was added successfully -> JSON: " + JSON.stringify(clients));
+                    console.log("-> Client with name \"" + clients.name + "\" was added successfully -> JSON: " + JSON.stringify(clients));
+                } else {
+                    res.status(400).send('Error in insert new record');
+                    console.log('Error in insert new record');
+                }
+            });
+        }).catch(next);
+
+    // connection.getConnection(function (err, connection) {
+    //     connection.query("Select (name) from clients where name = '" + name + "'", function (err, result) {
+    //         if (err) {
+    //             console.log("Database error");
+    //         } else if (result.toString() !== "") {
+    //             console.log("-> Client with name \"" + name + "\" already exists.");
+    //             res.status(400).send("-> Client with name \"" + name + "\" already exists.");
+    //         } else {
+    //             dao.createClient(name,contactName,email,type,country,startDate,endDate).then(function (clients) {
+    //                 if (clients) {
+    //                     res.send("-> Client with name \"" + clients.name + "\" was added successfully -> JSON: " + JSON.stringify(clients));
+    //                     console.log("-> Client with name \"" + clients.name + "\" was added successfully -> JSON: " + JSON.stringify(clients));
+    //                 } else {
+    //                     res.status(400).send('Error in insert new record');
+    //                     console.log('Error in insert new record');
+    //                 }
+    //             })
+    //         }
+    //     })
+    // })
+});
+
+router.put('/edit/:clientId', function (req, res, next) {
     let name = req.body.name;
     let contactName = req.body.contactName;
     let email = req.body.email;
@@ -111,31 +158,6 @@ router.post('/create', (req, res) => {
     let endDate = req.body.endDate;
 
     connection.getConnection(function (err, connection) {
-        connection.query("Select (name) from clients where name = '" + name + "'", function (err, result) {
-            if (err) {
-                console.log("Database error");
-            } else if (result.toString() !== "") {
-                console.log("-> Client with name \"" + name + "\" already exists.");
-                res.status(400).send("-> Client with name \"" + name + "\" already exists.");
-            } else {
-                dao.createClient(name,contactName,email,type,country,startDate,endDate).then(function (clients) {
-                    if (clients) {
-                        res.send("-> Client with name \"" + clients.name + "\" was added successfully -> JSON: " + JSON.stringify(clients));
-                        console.log("-> Client with name \"" + clients.name + "\" was added successfully -> JSON: " + JSON.stringify(clients));
-                    } else {
-                        res.status(400).send('Error in insert new record');
-                        console.log('Error in insert new record');
-                    }
-                })
-            }
-        })
-    })
-});
-
-router.put('/edit/:clientId', function (req, res, next) {
-    let name = req.body.name;
-
-    connection.getConnection(function (err, connection) {
         connection.query("Select * from clients where name = '" + name + "'", function (err, result) {
             if (err) {
                 console.log("Database error");
@@ -143,18 +165,7 @@ router.put('/edit/:clientId', function (req, res, next) {
                 console.log("-> Client with name \"" + name + "\" already exists.");
                 res.status(400).send("-> Client with name \"" + name + "\" already exists.");
             } else {
-                clients.update(
-                    {
-                        name: req.body.name,
-                        contactName: req.body.contactName,
-                        email: req.body.email,
-                        type: req.body.type,
-                        country: req.body.country,
-                        startDate: req.body.startDate,
-                        endDate: req.body.endDate
-                    },
-                    { where: { id: req.params.clientId } }
-                )
+                dao.updateClient(req.params.clientId,name,contactName,email,type,country,startDate,endDate)
                     .then(function (rowsUpdated) {
                         if (rowsUpdated.toString() === "0") {
                             console.log("-> Client with id " + req.params.clientId + " does not exist.");
@@ -181,11 +192,7 @@ router.delete('/delete/:clientId', function (req, res, next) {
                 console.log("-> Client with id " + req.params.clientId + " does not exist.");
                 res.status(400).send("-> Client with id " + req.params.clientId + " does not exist.");
             } else {
-                clients.destroy({
-                    where: {
-                        id: req.params.clientId
-                    }
-                });
+                dao.deleteClient(req.params.clientId);
                 res.send("-> Successfully deleted client with id " + req.params.clientId);
                 console.log("-> Successfully deleted client with id " + req.params.clientId);
             }
