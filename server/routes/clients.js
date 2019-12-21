@@ -118,10 +118,10 @@ router.post('/', (req, res, next) => {
         })
         .then((client) => {
             if (!client) {
-                throw { status: 400, message: 'Error in insert new record' }
-            }
-            return res.json(client);
-        })
+        throw { status: 400, message: 'Error in insert new record' }
+    }
+    return res.json(client);
+})
         .catch(next)
 
 });
@@ -135,32 +135,23 @@ router.put('/:clientId', function (req, res, next) {
     let startDate = req.body.startDate;
     let endDate = req.body.endDate;
 
+
     return dao.getClientByName(name)
         .then(clients => {
-            if (clients.toString() !== "" && clients[0]['id'].toString() !== req.params.clientId.toString()) {
-                throw {status: 409, message: 'Client with name "' + name + '" already exists'}
+            if (clients.toString() !== "") {
+                if (clients[0]['id'].toString() !== req.params.clientId.toString()) {
+                    throw {status: 409, message: 'Client with name ' + name + ' already exists'}
+                }
             }
-
             return dao.updateClient(req.params.clientId, name, contactName, email, type, country, startDate, endDate)
         })
         .then( rowsUpdated => {
-            // if (rowsUpdated.toString() === "0") {
-            //     throw {status: 409, message: 'Client with id "' + req.params.clientId + '" does not exist.'}
-            // } else {
-                //res.json(rowsUpdated);
-            // }
+            if (rowsUpdated) {
+                res.json(rowsUpdated);
+            } else {
+                throw {status: 409, message: 'Client with id "' + req.params.clientId + '" does not exist.'}
+            }
         }).catch(next)
-
-                    //     if (rowsUpdated.toString() === "0") {
-                    //         console.log("-> Client with id " + req.params.clientId + " does not exist.");
-                    //         res.status(400).send("-> Client with id " + req.params.clientId + " does not exist.");
-                    //     } else {
-                    //         connection.query("Select * from clients where id = '" + req.params.clientId + "'", function (err, result) {
-                    //             res.send("-> " + rowsUpdated + " row updated. Updated client: " + JSON.stringify(result));
-                    //             console.log("-> " + rowsUpdated + " row updated. Updated client: " + JSON.stringify(result));
-                    //         })
-                    //     }
-                    // }).catch(next)
 });
 
 
