@@ -126,7 +126,7 @@ router.post('/', (req, res, next) => {
 
 });
 
-router.put('/edit/:clientId', function (req, res, next) {
+router.put('/:clientId', function (req, res, next) {
     let name = req.body.name;
     let contactName = req.body.contactName;
     let email = req.body.email;
@@ -135,31 +135,60 @@ router.put('/edit/:clientId', function (req, res, next) {
     let startDate = req.body.startDate;
     let endDate = req.body.endDate;
 
-    connection.getConnection(function (err, connection) {
-        connection.query("Select * from clients where name = '" + name + "'", function (err, result) {
-            if (err) {
-                console.log("Database error");
-            } else if (result.toString() !== "" && result[0]['id'].toString() !== req.params.clientId.toString()) {
-                console.log("-> Client with name \"" + name + "\" already exists.");
-                res.status(400).send("-> Client with name \"" + name + "\" already exists.");
-            } else {
-                dao.updateClient(req.params.clientId, name, contactName, email, type, country, startDate, endDate)
-                    .then(function (rowsUpdated) {
-                        if (rowsUpdated.toString() === "0") {
-                            console.log("-> Client with id " + req.params.clientId + " does not exist.");
-                            res.status(400).send("-> Client with id " + req.params.clientId + " does not exist.");
-                        } else {
-                            connection.query("Select * from clients where id = '" + req.params.clientId + "'", function (err, result) {
-                                res.send("-> " + rowsUpdated + " row updated. Updated client: " + JSON.stringify(result));
-                                console.log("-> " + rowsUpdated + " row updated. Updated client: " + JSON.stringify(result));
-                            })
-                        }
-                    })
-                    .catch(next)
+    return dao.getClientByName(name)
+        .then(clients => {
+            if (clients.toString() !== "" && clients[0]['id'].toString() !== req.params.clientId.toString()) {
+                throw {status: 409, message: 'Client with name "' + name + '" already exists'}
             }
+
+            return dao.updateClient(req.params.clientId, name, contactName, email, type, country, startDate, endDate)
         })
-    })
+        .then( rowsUpdated => {
+            // if (rowsUpdated.toString() === "0") {
+            //     throw {status: 409, message: 'Client with id "' + req.params.clientId + '" does not exist.'}
+            // } else {
+                //res.json(rowsUpdated);
+            // }
+        }).catch(next)
+
+                    //     if (rowsUpdated.toString() === "0") {
+                    //         console.log("-> Client with id " + req.params.clientId + " does not exist.");
+                    //         res.status(400).send("-> Client with id " + req.params.clientId + " does not exist.");
+                    //     } else {
+                    //         connection.query("Select * from clients where id = '" + req.params.clientId + "'", function (err, result) {
+                    //             res.send("-> " + rowsUpdated + " row updated. Updated client: " + JSON.stringify(result));
+                    //             console.log("-> " + rowsUpdated + " row updated. Updated client: " + JSON.stringify(result));
+                    //         })
+                    //     }
+                    // }).catch(next)
 });
+
+
+//     connection.getConnection(function (err, connection) {
+//         connection.query("Select * from clients where name = '" + name + "'", function (err, result) {
+//             if (err) {
+//                 console.log("Database error");
+//             } else if (result.toString() !== "" && result[0]['id'].toString() !== req.params.clientId.toString()) {
+//                 console.log("-> Client with name \"" + name + "\" already exists.");
+//                 res.status(400).send("-> Client with name \"" + name + "\" already exists.");
+//             } else {
+//                 dao.updateClient(req.params.clientId, name, contactName, email, type, country, startDate, endDate)
+//                     .then(function (rowsUpdated) {
+//                         if (rowsUpdated.toString() === "0") {
+//                             console.log("-> Client with id " + req.params.clientId + " does not exist.");
+//                             res.status(400).send("-> Client with id " + req.params.clientId + " does not exist.");
+//                         } else {
+//                             connection.query("Select * from clients where id = '" + req.params.clientId + "'", function (err, result) {
+//                                 res.send("-> " + rowsUpdated + " row updated. Updated client: " + JSON.stringify(result));
+//                                 console.log("-> " + rowsUpdated + " row updated. Updated client: " + JSON.stringify(result));
+//                             })
+//                         }
+//                     })
+//                     .catch(next)
+//             }
+//         })
+//     })
+// });
 
 router.delete('/delete/:clientId', function (req, res, next) {
     connection.getConnection(function (err, connection) {
