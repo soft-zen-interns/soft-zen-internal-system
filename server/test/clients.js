@@ -103,30 +103,53 @@ describe("Test client endpoints", () => {
     });
 
 
-    // it('should edit client', (done) => {
-    //     const client = {
-    //         name: "testClient",
-    //         contactName: "testContact",
-    //         email: "testEmail",
-    //         type: "testType",
-    //         country: "testCountry",
-    //         startDate: "2019-12-14T13:04:40.574Z"
-    //     };
+    it('should edit client', (done) => {
 
-    //     const updateClientStub = sinon.stub(dao, 'updateClient').resolves(client);
+        let id = 1;
+        let name = "testClient";
+        let contactName = "testContact";
+        let email = "testEmail";
+        let type = "testType";
+        let country ="testCountry";
+        let startDate = "2019-12-14T13:04:40.574Z";
+        let endDate = "2019-12-14T13:04:40.574Z";
 
-    //     chai.request(app())
-    //         .put('/clients/edit/1')
-    //         .end((err, res) => {
-    //             expect(res.status).to.equal(200);
+        const client = {
+            id: id,
+            name: name,
+            contactName: contactName,
+            email: email,
+            type: type,
+            country: country,
+            startDate: startDate,
+            endDate: endDate
+        };
 
-    //             assert(updateClientStub.calledOnce, 'Expected to call dao.getClients() once');
+        const getClientByNameStub = sinon.stub(dao, 'getClientByName').resolves([]);
+        //const createClientStub = sinon.stub(dao, 'createClient').resolves(client);
+        const updateClientStub = sinon.stub(dao, 'updateClient').resolves(1);
 
-    //             updateClientStub.restore();
+        //client.name = "updatedName";
 
-    //             done();
-    //         });
-    // });
+        chai.request(app())
+            .put('/clients/' + id)
+            .send(client)
+            .end((err, res) => {
+                expect(res.status).to.equal(200);
+
+                assert(getClientByNameStub.calledOnce, 'Expected to call dao.getClientByName() once');
+                assert(getClientByNameStub.calledWithExactly(name), 'Expected to call dao.getClientByName() with exact args');
+
+                assert(updateClientStub.calledOnce, 'Expected to call dao.updateClient() once');
+                assert(updateClientStub.calledWith(id, name, contactName, email, type, country, startDate, endDate), 'Expected to call dao.updateClient() with exact args');
+
+                expect(res.body).to.deep.equal(1);
+
+                updateClientStub.restore();
+
+                done();
+            });
+    });
 
 
     // it('should delete client', (done) => {
