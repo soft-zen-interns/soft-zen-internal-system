@@ -126,10 +126,8 @@ describe("Test client endpoints", () => {
         }
 
         const getClientByNameStub = sinon.stub(dao, 'getClientByName').resolves([])
-        //const createClientStub = sinon.stub(dao, 'createClient').resolves(client)
         const updateClientStub = sinon.stub(dao, 'updateClient').resolves(1)
 
-        //client.name = "updatedName"
 
         chai.request(app())
             .put('/clients/' + id)
@@ -146,6 +144,7 @@ describe("Test client endpoints", () => {
 
                 expect(res.body).to.deep.equal(1)
 
+                getClientByNameStub.restore()
                 updateClientStub.restore()
 
                 done()
@@ -153,28 +152,47 @@ describe("Test client endpoints", () => {
     })
 
 
-    // it('should delete client', (done) => {
-    //     const client = {
-    //         name: "testClient",
-    //         contactName: "testContact",
-    //         email: "testEmail",
-    //         type: "testType",
-    //         country: "testCountry",
-    //         startDate: "2019-12-14T13:04:40.574Z"
-    //     }
+    it('should delete client', (done) => {
+        let id = '1'
+        let name = "testClient"
+        let contactName = "testContact"
+        let email = "testEmail"
+        let type = "testType"
+        let country = "testCountry"
+        let startDate = "2019-12-14T13:04:40.574Z"
+        let endDate = "2019-12-14T13:04:40.574Z"
 
-    //     const deleteClientStub = sinon.stub(dao, 'deleteClient').resolves(client)
+        const client = {
+            id: id,
+            name: name,
+            contactName: contactName,
+            email: email,
+            type: type,
+            country: country,
+            startDate: startDate,
+            endDate: endDate
+        }
 
-    //     chai.request(app())
-    //         .delete('/clients/delete/1')
-    //         .end((err, res) => {
-    //             expect(res.status).to.equal(200)
+        const getClientByIdStub = sinon.stub(dao, 'getClientById').resolves(client)
+        const deleteClientStub = sinon.stub(dao, 'deleteClient').resolves()
 
-    //             assert(deleteClientStub.calledOnce, 'Expected to call dao.getClients() once')
+        chai.request(app())
+            .delete('/clients/' + id)
+            .end((err, res) => {
+                expect(res.status).to.equal(200)
 
-    //             deleteClientStub.restore()
+                assert(getClientByIdStub.calledOnce, 'Expected to call dao.getClientByName() once')
+                assert(getClientByIdStub.calledWithExactly(id), 'Expected to call dao.getClientById() with exact args')
 
-    //             done()
-    //         })
-    // })
+                assert(deleteClientStub.calledOnce, 'Expected to call dao.updateClient() once')
+                assert(deleteClientStub.calledWith(id), 'Expected to call dao.deleteClient() with exact args')
+
+                expect(res.body).to.deep.equal({message: "Successfully deleted client with id " + id})
+
+                getClientByIdStub.restore()
+                deleteClientStub.restore()
+
+                done()
+            })
+    })
 })
