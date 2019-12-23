@@ -75,6 +75,10 @@ module.exports.getClientByName = (name) => {
   return db.query("Select * from `clients` where `name` = '" + name + "'");
 };
 
+module.exports.getClientById = (id) => {
+  return db.query("Select * from `clients` where `id` = '" + id + "'");
+};
+
 module.exports.createClient = (name,contactName,email,type,country,startDate,endDate) => {
   return clients.create({
     name: name,
