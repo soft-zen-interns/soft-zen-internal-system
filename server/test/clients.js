@@ -125,7 +125,7 @@ describe("Test client endpoints", () => {
             endDate: endDate
         }
 
-        const getClientByNameStub = sinon.stub(dao, 'getClientByName').resolves([])
+        const getClientByIdStub = sinon.stub(dao, 'getClientById').resolves([client])
         const updateClientStub = sinon.stub(dao, 'updateClient').resolves(1)
 
 
@@ -135,16 +135,16 @@ describe("Test client endpoints", () => {
             .end((err, res) => {
                 expect(res.status).to.equal(200)
 
-                assert(getClientByNameStub.calledOnce, 'Expected to call dao.getClientByName() once')
-                assert(getClientByNameStub.calledWithExactly(name), 'Expected to call dao.getClientByName() with exact args')
+                assert(getClientByIdStub.calledOnce, 'Expected to call dao.getClientById() once')
+                assert(getClientByIdStub.calledWithExactly(id), 'Expected to call dao.getClientById() with exact args')
 
                 assert(updateClientStub.calledOnce, 'Expected to call dao.updateClient() once')
                 console.log({ id, name, contactName, email, type, country, startDate, endDate })
                 assert(updateClientStub.calledWith(id, name, contactName, email, type, country, startDate, endDate), 'Expected to call dao.updateClient() with exact args')
 
-                expect(res.body).to.deep.equal(1)
+                expect(res.body.message).to.deep.equal("1 row updated.")
 
-                getClientByNameStub.restore()
+                getClientByIdStub.restore()
                 updateClientStub.restore()
 
                 done()
@@ -187,7 +187,7 @@ describe("Test client endpoints", () => {
                 assert(deleteClientStub.calledOnce, 'Expected to call dao.updateClient() once')
                 assert(deleteClientStub.calledWith(id), 'Expected to call dao.deleteClient() with exact args')
 
-                expect(res.body).to.deep.equal({message: "Successfully deleted client with id " + id})
+                expect(res.body.message).to.deep.equal("Successfully deleted client with id " + id)
 
                 getClientByIdStub.restore()
                 deleteClientStub.restore()
