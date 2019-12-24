@@ -127,31 +127,44 @@ router.post('/', (req, res, next) => {
 });
 
 router.put('/:clientId', function (req, res, next) {
-    let name = req.body.name;
-    let contactName = req.body.contactName;
-    let email = req.body.email;
-    let type = req.body.type;
-    let country = req.body.country;
-    let startDate = req.body.startDate;
-    let endDate = req.body.endDate;
+    let id = req.params.clientId
+    let name = req.body.name
+    let contactName = req.body.contactName
+    let email = req.body.email
+    let type = req.body.type
+    let country = req.body.country
+    let startDate = req.body.startDate
+    let endDate = req.body.endDate
 
 
-    return dao.getClientByName(name)
-        .then(clients => {
-            if (clients.toString() !== "") {
-                if (clients[0]['id'].toString() !== req.params.clientId.toString()) {
-                    throw {status: 409, message: 'Client with name ' + name + ' already exists'}
-                }
+    return dao.getClientById(id)
+        .then((client) => {
+            if (client.length === 0) {
+                throw {status: 409, message: 'Client with id ' + id + ' does not exist.'}
             }
-            return dao.updateClient(req.params.clientId, name, contactName, email, type, country, startDate, endDate)
+            return dao.updateClient(id,name,contactName,email,type,country,startDate,endDate)
         })
-        .then( rowsUpdated => {
-            if (rowsUpdated) {
-                res.json(rowsUpdated);
-            } else {
-                throw {status: 409, message: 'Client with id "' + req.params.clientId + '" does not exist.'}
+        .then((rowsUpdated) => {
+            if (rowsUpdated){
+                res.json({rowsUpdated: rowsUpdated, message: rowsUpdated + ' row updated.'})
             }
         }).catch(next)
+    // return dao.getClientByName(name)
+    //     .then(clients => {
+    //         if (clients.toString() !== "") {
+    //             if (clients[0]['id'].toString() !== req.params.clientId.toString()) {
+    //                 throw {status: 409, message: 'Client with name ' + name + ' already exists'}
+    //             }
+    //         }
+    //         return dao.updateClient(req.params.clientId, name, contactName, email, type, country, startDate, endDate)
+    //     })
+    //     .then( rowsUpdated => {
+    //         if (rowsUpdated) {
+    //             res.json(rowsUpdated);
+    //         } else {
+    //             throw {status: 409, message: 'Client with id "' + req.params.clientId + '" does not exist.'}
+    //         }
+    //     }).catch(next)
 });
 
 
