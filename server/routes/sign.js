@@ -39,11 +39,13 @@ router.post('/up', (req,res,next) => {
             if(users.length !== 0){
                 throw { status: 409, message: 'User already exists' }
             }
-            let hashPassword = crypto.createHmac('sha256', secret)
-                .update(password)
-                .digest('hex')
 
             if (password != null) {
+                let hashPassword = crypto.createHmac('sha256', secret)
+                    .update(password)
+                    .digest('hex')
+
+
                 return dao.createUser(username, hashPassword)
                     .then(users => {
                         let payload =
@@ -61,6 +63,8 @@ router.post('/up', (req,res,next) => {
                             throw {status: 409, message: "Something went wrong."}
                         }
                     })
+            }else {
+                throw {status: 409, message: "No password!"}
             }
         }).catch(next)
 })
