@@ -17,7 +17,7 @@ const users = sequelize.define('users', {
 });
 
 module.exports.getUsersByUsername = (username) => {
-    return db.query('SELECT * FROM `users` WHERE `username` = \'username\'')
+    return db.query("SELECT * FROM `users` WHERE `username` = '" + username + "'")
 }
 
 module.exports.createUser = (username, password) => {

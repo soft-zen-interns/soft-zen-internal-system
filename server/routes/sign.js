@@ -43,23 +43,25 @@ router.post('/up', (req,res,next) => {
                 .update(password)
                 .digest('hex')
 
-            return dao.createUser(username, hashPassword)
-                .then(users => {
-                    let payload =
-                        {
-                            username: username,
-                            password: hashPassword
+            if (password != null) {
+                return dao.createUser(username, hashPassword)
+                    .then(users => {
+                        let payload =
+                            {
+                                username: username,
+                                password: hashPassword
+                            }
+
+                        if (users) {
+                            let token = jwt.sign(payload, "secret_key", {algorithm: 'HS256'});
+
+                            res.json({message: "New user was created successfully.",
+                                token: token})
+                        } else {
+                            throw {status: 409, message: "Something went wrong."}
                         }
-
-                    if (users) {
-                        let token = jwt.sign(payload, "secret_key", {algorithm: 'HS256'});
-
-                        res.json({message: "New user was created successfully.",
-                                    token: token})
-                    } else {
-                       throw {status: 404, message: "Something went wrong."}
-                    }
-                })
+                    })
+            }
         }).catch(next)
 })
 
