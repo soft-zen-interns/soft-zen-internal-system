@@ -69,6 +69,7 @@ router.post('/up', (req,res,next) => {
         }).catch(next)
 })
 
+// OLD CODE
 
 // router.post('/up', (req,res) => {
 //     console.log(req.body);
@@ -113,42 +114,81 @@ router.post('/up', (req,res,next) => {
 // });
 
 
-router.get('/in', (req,res) => {
-    var username = req.body.username;
-    var password = req.body.password;
 
-    connection.getConnection(function (err, connection) {
-        connection.query("Select (token) from users where username = '" + username + "'", function (err, result) {
-            if (err) {
-                console.log("Database error");
-            } else if (result.toString() === "") {
-                console.log("-> " + username + " does not exists.");
-                res.status(400).send("-> " + username + " does not exists.");
-            } else {
-                if (password != null) {
-                    let token = result[0].token.toString();
+router.get('/in', (req,res,next) => {
+    const secret = 'secretKey'
+    let username = req.body.username
+    let password = req.body.password
 
-                    jwt.verify(token,"secret_key",function(err,verifiedJwt){
-                        if(err){
-                            res.status(400).send("Token has expired, or something else went wrong");
-                        }else{
-                            if (verifiedJwt.password.toString() === password)
-                            {
-                                res.send(token);
-                            }else{
-                                res.status(400).send("Wrong password");
-                            }
-                        }
-                    });
-                } else {
-                    res.status(400).send('No password!');
-                    console.log('No password!');
-                }
+    return dao.getUsersByUsername(username)
+        .then(users => {
+            if (users.length === 0) {
+                throw {status: 409, message: 'User does not exist'}
             }
 
-        })
-    })
-});
+            if (password != null) {
+                let hashPassword = crypto.createHmac('sha256', secret)
+                    .update(password)
+                    .digest('hex')
+
+                if (users[0].password === hashPassword) {
+                    let payload =
+                        {
+                            username: username,
+                            password: hashPassword
+                        }
+
+                    let token = jwt.sign(payload, "secret_key", {algorithm: 'HS256'});
+
+                    res.json({
+                        message: "Logged in successfully.",
+                        token: token
+                    })
+                }else{
+                    throw {status: 409, message: 'Wrong password!'}
+                }
+            }else{
+                throw {status: 409, message: "No password!"}
+            }
+        }).catch(next)
+})
+
+// router.get('/in', (req,res) => {
+//     var username = req.body.username;
+//     var password = req.body.password;
+//
+//     connection.getConnection(function (err, connection) {
+//         connection.query("Select (token) from users where username = '" + username + "'", function (err, result) {
+//             if (err) {
+//                 console.log("Database error");
+//             } else if (result.toString() === "") {
+//                 console.log("-> " + username + " does not exists.");
+//                 res.status(400).send("-> " + username + " does not exists.");
+//             } else {
+//                 if (password != null) {
+//                     let token = result[0].token.toString();
+//
+//                     jwt.verify(token,"secret_key",function(err,verifiedJwt){
+//                         if(err){
+//                             res.status(400).send("Token has expired, or something else went wrong");
+//                         }else{
+//                             if (verifiedJwt.password.toString() === password)
+//                             {
+//                                 res.send(token);
+//                             }else{
+//                                 res.status(400).send("Wrong password");
+//                             }
+//                         }
+//                     });
+//                 } else {
+//                     res.status(400).send('No password!');
+//                     console.log('No password!');
+//                 }
+//             }
+//
+//         })
+//    })
+//});
 
 
 module.exports = router;
